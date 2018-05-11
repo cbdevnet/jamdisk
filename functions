@@ -1,0 +1,94 @@
+#!/bin/sh
+
+scan_deps(){
+	# This is really hacky but it might just work for most things
+	ldd "$1" | tr -d "\t=" | cut -d "(" -f 1 | while read line; do
+		case "$line" in
+			"statically"*)
+				# Statically linked, we're done
+				break
+				;;
+			"linux-vdso"*)
+				# Skip, provided by kernel
+				;;
+			*" > "*)
+				want_lib "$(printf "%s" "$line" | tr -d "[:space:]" | cut -d ">" -f 1)" "$(printf "%s" "$line" | tr -d "[:space:]" | cut -d ">" -f 2)"
+				;;
+			*)
+				want_lib "$line"
+				;;
+		esac
+	done
+}
+
+want_bin(){
+	binpath=$(which "$1")
+	if [ -z "$binpath" ]; then
+		printf "Failed to find binary %s\n" "$1"
+		exit 1
+	fi
+
+	if [ -x "./$binpath" ]; then
+		return 0
+	fi
+
+	printf "\tPulling in binary %s\n" "$1"
+	mkdir -p "./$(dirname $binpath)"
+	cp "$binpath" "./$binpath"
+
+	scan_deps "$binpath"
+	return 0
+}
+
+want_lib(){
+	case "$1" in
+		/*)
+			# Direct-copy library
+			libpath="$1"
+			libname="$(basename "$1")"
+			;;
+		*)
+			# Test-find library
+			if [ -n "$2" ]; then
+				libpath="$2"
+				libname="$1"
+			else
+				# Need to find library path
+				printf "Functionality not yet implemented\n"
+				exit 1
+			fi
+	esac
+
+	if [ -f "./$libpath" ]; then
+		return 0
+	fi
+
+	printf "\tPulling in library %s\n" "$libname"
+	mkdir -p "./$(dirname $libpath)"
+	cp "$libpath" "./$libpath"
+
+	scan_deps "$libpath"
+	return 0
+}
+
+want_module(){
+	modinfo=$(grep "$1" "/lib/modules/$(uname -r)/modules.dep" | head -n 1)
+	modpath="/lib/modules/$(uname -r)/$(printf "%s" "$modinfo" | cut -d ":" -f 1)"
+	moddeps="$(printf "%s" "$modinfo" | cut -d ":" -f 2 | tr " " "\n")"
+
+	if [ -f ".$modpath" ]; then
+		return 0
+	fi
+
+	printf "\tPulling in module %s\n" "$(basename "$modpath")"
+
+	mkdir -p ".$(dirname $modpath)"
+	cp "$modpath" ".$modpath"
+
+	if [ -n "$moddeps" ]; then
+		for dep in $moddeps; do
+			want_module "$dep:"
+		done
+	fi
+	return 0
+}

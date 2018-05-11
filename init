@@ -1,0 +1,22 @@
+#!/bin/busybox sh
+
+for dir in bin dev etc lib lib64 mnt proc root sys usr/sbin usr/bin sbin; do
+	/bin/busybox mkdir -p "$dir"
+done
+
+/bin/busybox --install -s
+
+mount -t proc none /proc
+mount -t sysfs none /sys
+mount -t devtmpfs none /dev
+
+if [ -x "./main" ]; then
+	./main
+else
+	printf "This is jamdisk"
+	sh
+fi
+
+umount /dev
+umount /proc
+umount /sys

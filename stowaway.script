@@ -1,0 +1,8 @@
+want_bin rsync
+want_bin sfdisk
+want_bin whiptail
+
+want_module tg3
+want_module igb
+want_module e1000
+want_module e1000e

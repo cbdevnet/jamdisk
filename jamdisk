@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+if [ -z "$(which ldd)" ]; then
+	printf "Require working ldd\n"
+	exit 1
+fi
+
+. ./functions
+
+ROOT=$(mktemp -d)
+JAMDISK=$(pwd)
+
+printf "Working in %s\n" "$ROOT"
+
+printf "Processing required files\n"
+(
+	set +e
+	cd "$ROOT"
+	want_bin busybox
+
+	if [ -n "$JAMDISK/$1" ] && [ -f "$JAMDISK/$1.script" ]; then
+		. "$JAMDISK/$1.script"
+	fi
+)
+
+printf "Installing custom override files\n"
+if [ -d "$1" ]; then
+	cp -dr "$1/." "$ROOT"
+fi
+
+printf "Installing init\n"
+cp init "$ROOT"
+
+printf "Building initial RAM filesystem\n"
+(cd "$ROOT"; find . -print0 | cpio --null -o --format=newc | gzip -9) > "$1.initrd"
+
+printf "Cleaning up\n"
+rm -rf "$ROOT"
