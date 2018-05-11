@@ -10,8 +10,13 @@ fi
 
 ROOT=$(mktemp -d)
 JAMDISK=$(pwd)
+PROJECT="jamdisk"
 
-printf "Working in %s\n" "$ROOT"
+if [ -n "$1" ]; then
+	PROJECT="$1"
+fi
+
+printf "Working in %s, building project %s\n" "$ROOT" "$PROJECT"
 
 printf "Processing required files\n"
 (
@@ -19,21 +24,21 @@ printf "Processing required files\n"
 	cd "$ROOT"
 	want_bin busybox
 
-	if [ -n "$JAMDISK/$1" ] && [ -f "$JAMDISK/$1.script" ]; then
-		. "$JAMDISK/$1.script"
+	if [ -f "$JAMDISK/$PROJECT.script" ]; then
+		. "$JAMDISK/$PROJECT.script"
 	fi
 )
 
 printf "Installing custom override files\n"
-if [ -d "$1" ]; then
-	cp -dr "$1/." "$ROOT"
+if [ -d "$PROJECT" ]; then
+	cp -dr "$PROJECT/." "$ROOT"
 fi
 
 printf "Installing init\n"
 cp init "$ROOT"
 
 printf "Building initial RAM filesystem\n"
-(cd "$ROOT"; find . -print0 | cpio --null -o --format=newc | gzip -9) > "$1.initrd"
+(cd "$ROOT"; find . -print0 | cpio --null -o --format=newc | gzip -9) > "$PROJECT.initrd"
 
 printf "Cleaning up\n"
 rm -rf "$ROOT"
