@@ -1,19 +1,58 @@
 #!/bin/busybox sh
+#set -x
 
+# Create directory structure if it doesn't already exist from the overlay
 for dir in bin dev etc lib lib64 mnt proc root sys usr/sbin usr/bin sbin; do
 	/bin/busybox mkdir -p "$dir"
 done
 
+# Install busybox links
 /bin/busybox --install -s
 
+# Create some more environment
 mount -t proc none /proc
 mount -t sysfs none /sys
 mount -t devtmpfs none /dev
 
+# Stop kernel messages
+printf "3 4 1 3" > /proc/sys/kernel/printk
+
+# Load kernel modules
+depmod
+cat modules | while read mod; do
+	modprobe "$mod"
+done
+
+# Bring up a network interface
+if [ -n "$BOOTIF" ]; then
+	mac=$(printf "%s" "$BOOTIF" | cut -d "-" -f 2- | tr "-" ":" | tr -d " \n")
+	for ifacepath in /sys/class/net/*; do
+		iface=$(basename "$ifacepath")
+		if [ -f "$ifacepath/address" ]; then
+			if [ "$mac" = "$(cat $ifacepath/address | tr -d " \n")" ]; then
+				printf "Boot interface recognized as %s, trying DHCP\n" "$iface"
+				ip l set dev "$iface" up
+				udhcpc -i "$iface" -s ./udhcpc.script
+				done=1
+			fi
+		fi
+	done
+	if [ -z "$done" ]; then
+		printf "Boot interface %s not found, not configured\n" "$mac"
+	fi
+else
+	for iface in /sys/class/net/*; do
+		ip l set dev "$iface" up
+	done
+
+	printf "Trying DHCP on all supported interfaces\n"
+	udhcpc -s ./udhcpc.script
+fi
+
 if [ -x "./main" ]; then
 	./main
 else
-	printf "This is jamdisk"
+	printf "This is jamdisk\n"
 	sh
 fi
 

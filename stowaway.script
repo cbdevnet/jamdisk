@@ -1,8 +1,19 @@
-want_bin rsync
+want_bin rsync                                                                 
 want_bin sfdisk
 want_bin whiptail
+want_bin partclone.btrfs
+want_bin partclone.dd   
+want_bin partclone.exfat
+want_bin partclone.extfs
+want_bin partclone.fat
+want_bin partclone.hfsp
+want_bin partclone.ntfs
+want_bin partclone.ntfsfixboot
+want_bin partclone.restore
+want_bin partclone.xfs
+want_bin partclone.chkimg
 
 want_module tg3
 want_module igb
-want_module e1000
 want_module e1000e
+want_module e1000

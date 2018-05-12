@@ -71,7 +71,7 @@ want_lib(){
 	return 0
 }
 
-want_module(){
+want_module_internal(){
 	modinfo=$(grep "$1" "/lib/modules/$(uname -r)/modules.dep" | head -n 1)
 	modpath="/lib/modules/$(uname -r)/$(printf "%s" "$modinfo" | cut -d ":" -f 1)"
 	moddeps="$(printf "%s" "$modinfo" | cut -d ":" -f 2 | tr " " "\n")"
@@ -87,8 +87,13 @@ want_module(){
 
 	if [ -n "$moddeps" ]; then
 		for dep in $moddeps; do
-			want_module "$dep:"
+			want_module_internal "$dep:"
 		done
 	fi
 	return 0
+}
+
+want_module(){
+	printf "$1\n" >> modules
+	want_module_internal $1
 }

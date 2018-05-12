@@ -1,0 +1,30 @@
+#!/bin/sh
+
+case "$1" in
+	"deconfig")
+		ip l set dev "$interface" down
+		ip l set dev "$interface" up
+		;;
+	"renew")
+		ip a replace "$ip/$mask" dev "$interface"
+		echo "" > "/etc/resolv.conf"
+		for srv in $dns; do
+			printf "nameserver %s\n" "$srv" >> "/etc/resolv.conf"
+		done
+		for rtr in $router; do
+			ip r replace default via "$rtr" dev "$interface"
+		done
+		;;
+	"bound")
+		ip a add "$ip/$mask" dev "$interface"
+		for srv in $dns; do
+			printf "nameserver %s\n" "$srv" >> "/etc/resolv.conf"
+		done
+		for rtr in $router; do
+			ip r add default via "$rtr" dev "$interface"
+		done
+		;;
+	"nak")
+		printf "Failed to get a DHCP lease\n"
+		;;
+esac
