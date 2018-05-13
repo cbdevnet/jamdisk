@@ -49,7 +49,12 @@ jamdisk as root.
 
 ### Booting the image
 
-As jamdisk was created primarily with PXE boot environments in mind, it ships with an example [pxelinux configuration file](pxelinux.cfg). As jamdisk uses the kernel modules from the host on which it is run, the appropriate kernel should be used to boot the resulting initramfs (though in many cases, the ABI remains stable). It is of course also possible to boot the resulting initramfs files from a bootloader of your choice (such as Grub, LiLo, etc). Any parameters passed to the initramfs (e.g. via an `APPEND` directive) are present in the `main` script of your project.
+As jamdisk was created primarily with PXE boot environments in mind, it ships with an example [pxelinux configuration file](pxelinux.cfg).
+jamdisk uses the kernel modules from the host on which it is run. This means that the appropriate kernel should be used to boot the resulting initramfs,
+though in many cases, the ABI remains stable so other versions might work.
+It is of course also possible to boot the resulting initramfs files from a bootloader of your choice (such as Grub, LiLo, etc).
+
+Any parameters passed to the initramfs (e.g. via an `APPEND` directive) are present in the `main` script of your project.
 
 When booting with PXELinux, setting the `SYSAPPEND 2` flag provides the init script with the MAC address of the interface used to PXE boot the system. This information can then be used by the script to configure networking.
 
@@ -59,13 +64,4 @@ When booting with PXELinux, setting the `SYSAPPEND 2` flag provides the init scr
 and restore full-disk host backups quickly and without much configuration.
 
 # Author & Licensing
-
-Copyright 2018 Fabian "cbdev" Stumpf
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+See [LICENSE.txt](LICENSE.txt)
