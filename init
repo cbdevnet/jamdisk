@@ -18,10 +18,12 @@ mount -t devtmpfs none /dev
 printf "3 4 1 3" > /proc/sys/kernel/printk
 
 # Load kernel modules
-depmod
-cat modules | while read mod; do
-	modprobe "$mod"
-done
+if [ -f "modules" ]; then
+	depmod
+	cat modules | while read mod; do
+		modprobe "$mod"
+	done
+fi
 
 # Bring up a network interface
 if [ -n "$BOOTIF" ]; then

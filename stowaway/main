@@ -1,0 +1,11 @@
+#!/bin/sh
+
+if [ -z "$NAME" ]; then
+	NAME=$(whiptail --inputbox "Please enter backup name for this system" 8 78 Blue --title "Stowaway" 3>&1 1>&2 2>&3)
+fi
+
+whiptail --title "Stowaway" --menu "Welcome to Stowaway" 25 78 16 \
+	"Backup" "Create a new backup" \
+	"Restore" "Restore a previous backup" \
+	"Info" "System information" \
+	"Exit" "Exit and reboot"
