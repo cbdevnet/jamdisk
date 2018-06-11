@@ -7,6 +7,7 @@ scan_deps(){
 			"not a dynamic executable"*)
 				printf "Can't properly read dependencies, this may not work\n"
 				break
+				;;
 			"statically"*)
 				# Statically linked, we're done
 				break
