@@ -4,6 +4,9 @@ scan_deps(){
 	# This is really hacky but it might just work for most things
 	ldd "$1" | tr -d "\t=" | cut -d "(" -f 1 | while read line; do
 		case "$line" in
+			"not a dynamic executable"*)
+				printf "Can't properly read dependencies, this may not work\n"
+				break
 			"statically"*)
 				# Statically linked, we're done
 				break
@@ -73,6 +76,11 @@ want_lib(){
 
 want_module_internal(){
 	modinfo=$(grep "$1" "/lib/modules/$(uname -r)/modules.dep" | head -n 1)
+	if [ -z "$modinfo" ]; then
+		printf "Module %s not found\n" "$1"
+		return 1
+	fi
+
 	modpath="/lib/modules/$(uname -r)/$(printf "%s" "$modinfo" | cut -d ":" -f 1)"
 	moddeps="$(printf "%s" "$modinfo" | cut -d ":" -f 2 | tr " " "\n")"
 
@@ -95,5 +103,9 @@ want_module_internal(){
 
 want_module(){
 	printf "$1\n" >> modules
-	want_module_internal $1
+	if [ -n "$2" ]; then
+		want_module_internal $2
+	else
+		want_module_internal $1
+	fi
 }

@@ -1,11 +1,52 @@
 #!/bin/sh
 
-if [ -z "$NAME" ]; then
-	NAME=$(whiptail --inputbox "Please enter backup name for this system" 8 78 Blue --title "Stowaway" 3>&1 1>&2 2>&3)
+while [ -z "$NAME" ]; do
+	NAME=$(whiptail --inputbox "Please enter backup name for this system" 8 78 generic-host --title "Stowaway" 3>&1 1>&2 2>&3)
+done
+
+mainMenu(){
+	MODE=$(whiptail --title "Stowaway" --menu "Welcome to Stowaway ($NAME)" 25 78 16 \
+		"Backup" "Create a new backup" \
+		"Restore" "Restore a previous backup" \
+		"Info" "System information" \
+		"Shell" "Spawn a shell" \
+		"Exit" "Exit and reboot" 3>&1 1>&2 2>&3)
+}
+
+. ./backup
+. ./restore
+
+# If mode set from command line, exit after actio
+if [ -n "$MODE" ]; then
+	AUTOEXIT=1
 fi
 
-whiptail --title "Stowaway" --menu "Welcome to Stowaway" 25 78 16 \
-	"Backup" "Create a new backup" \
-	"Restore" "Restore a previous backup" \
-	"Info" "System information" \
-	"Exit" "Exit and reboot"
+while [ "$MODE" != "Exit" ]; do
+	mainMenu
+	case "$MODE" in
+		"Backup")
+			backup
+			;;
+		"Restore")
+			clear
+			printf "TODO restore\n"
+			read -n 1
+			;;
+		"Info")
+			whiptail --title "Stowaway" --msgbox "System Name	$NAME\nExfil method	$EXFIL\nDevices	$DEVICES" 8 78
+			;;
+		"Shell")
+			sh
+			;;
+		*)
+			break
+			;;
+	esac
+
+	# If mode set from boot command line, immediately go down again
+	if [ -n "$AUTOEXIT" ]; then
+		/sbin/poweroff -f
+	fi
+done
+
+/sbin/reboot -f

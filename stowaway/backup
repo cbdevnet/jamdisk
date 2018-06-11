@@ -1,0 +1,14 @@
+#!/bin/sh
+
+backup(){
+	clear
+	if [ ! -x "./exfil/$EXFIL" ]; then
+		printf "The selected exfil method is not available\n"
+		read -n 1
+		return 1
+	fi
+
+	for device in $DEVICES; do
+		sfdisk -d "$device" | ./exfil/$EXFIL "$device" "layout"
+	done
+}

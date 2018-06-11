@@ -1,6 +1,10 @@
-want_bin rsync                                                                 
-want_bin sfdisk
 want_bin whiptail
+want_bin lsblk
+want_bin blkid
+want_bin fdisk
+
+# Imaging
+want_bin sfdisk
 want_bin partclone.btrfs
 want_bin partclone.dd   
 want_bin partclone.exfat
@@ -12,6 +16,25 @@ want_bin partclone.ntfsfixboot
 want_bin partclone.restore
 want_bin partclone.xfs
 want_bin partclone.chkimg
+want_bin lspci
+
+# Exfil tools
+want_bin mount.nfs
+want_bin nc.openbsd
+want_bin rsync                                                                 
+
+want_module ahci
+want_module sdhci-pci
+want_module sd_mod
+
+want_module uas
+want_module usb-storage
+want_module usbcore
+want_module scsi_mod
+want_module usb-common
+want_module sg scsi/sg.ko
+want_module ata_piix
+want_module ata_generic
 
 want_module tg3
 want_module igb
