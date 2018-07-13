@@ -110,3 +110,24 @@ want_module(){
 		want_module_internal $1
 	fi
 }
+
+want_module_dir(){
+	printf "Not yet implemented\n"
+	return 1
+}
+
+want_dir(){
+	case "$1" in
+		"/"*)
+			break;
+			;;
+		*)
+			printf "Cannot pull in directory %s based on relative paths\n" "$1"
+			return 1
+			;;
+	esac
+
+	printf "\tPulling in directory %s\n" "$1"
+	mkdir -p "./$1"
+	cp -dr "$1/." "./$1"
+}

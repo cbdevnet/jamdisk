@@ -13,6 +13,8 @@ done
 mount -t proc none /proc
 mount -t sysfs none /sys
 mount -t devtmpfs none /dev
+mkdir /dev/pts
+mount -t devpts none /dev/pts
 
 # Stop kernel messages
 printf "3 4 1 3" > /proc/sys/kernel/printk
@@ -34,21 +36,21 @@ if [ -n "$BOOTIF" ]; then
 			if [ "$mac" = "$(cat $ifacepath/address | tr -d " \n")" ]; then
 				printf "Boot interface recognized as %s, trying DHCP\n" "$iface"
 				ip l set dev "$iface" up
-				udhcpc -i "$iface" -s ./udhcpc.script
-				done=1
+				udhcpc -t 3 -i "$iface" -s ./udhcpc.script
+				dhcp_done=1
 			fi
 		fi
 	done
-	if [ -z "$done" ]; then
+	if [ -z "$dhcp_done" ]; then
 		printf "Boot interface %s not found, not configured\n" "$mac"
 	fi
-else
+elif [ "$dhcp" != "no" ]; then
 	for iface in /sys/class/net/*; do
 		ip l set dev "$iface" up
 	done
 
 	printf "Trying DHCP on all supported interfaces\n"
-	udhcpc -s ./udhcpc.script
+	udhcpc -t 3 -s ./udhcpc.script
 fi
 
 if [ -x "./main" ]; then
@@ -58,6 +60,7 @@ else
 	sh
 fi
 
+umount /dev/pts
 umount /dev
 umount /proc
 umount /sys
