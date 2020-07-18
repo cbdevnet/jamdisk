@@ -44,6 +44,18 @@ want_bin(){
 	return 0
 }
 
+want_file(){
+	if [ ! -f "$1" ]; then
+		printf "No such file %s\n" "$1"
+		return 0
+	fi
+
+	printf "\tPulling in file %s\n" "$1"
+	mkdir -p "./$(dirname $1)"
+	cp "$1" "./$1"
+	return 0
+}
+
 want_lib(){
 	case "$1" in
 		/*)

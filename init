@@ -27,6 +27,9 @@ if [ -f "modules" ]; then
 	done
 fi
 
+printf "Waiting for devices to come up\n"
+sleep 5
+
 # Bring up a network interface
 if [ -n "$BOOTIF" ]; then
 	mac=$(printf "%s" "$BOOTIF" | cut -d "-" -f 2- | tr "-" ":" | tr -d " \n")

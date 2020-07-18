@@ -43,3 +43,5 @@ printf "Building initial RAM filesystem\n"
 
 printf "Cleaning up\n"
 rm -rf "$ROOT"
+
+printf "Done building %s, please use kernel %s (probably from /boot) to run it\n" "$PROJECT.initrd" "$(uname -r)"

@@ -2,6 +2,12 @@ want_bin whiptail
 want_bin lsblk
 want_bin blkid
 want_bin fdisk
+want_bin vim
+want_bin e2label
+want_bin wget
+want_bin curl
+want_bin fsck.vfat
+want_bin fsck.ext4
 
 # Imaging
 want_bin sfdisk
@@ -21,22 +27,52 @@ want_bin lspci
 # Exfil tools
 want_bin mount.nfs
 want_bin nc.openbsd
-want_bin rsync                                                                 
+want_bin rsync
+want_bin dbclient
 
+# USB input devices
+want_module usbcore
+want_module ehci-hcd
+want_module xhci-pci
+want_module uhci-hcd
+want_module ohci-hcd
+want_module ohci-pci
+want_module usb-common
+want_module hid-generic
+want_module hid-sensor-hub
+want_module i2c-hid
+want_module usbhid
+want_module hid-logitech-dj
+want_module hid-logitech-hidpp
+#want_module i8042
+#want_module atkbd
+
+# Storage access
 want_module ahci
 want_module sdhci-pci
 want_module sd_mod
-
 want_module uas
 want_module usb-storage
-want_module usbcore
 want_module scsi_mod
-want_module usb-common
+want_module usbnet
 want_module sg scsi/sg.ko
 want_module ata_piix
 want_module ata_generic
+want_module nls_cp437
+want_module nls_ascii
+want_module nls_utf8
+want_module vfat
+want_module nvme.ko
+want_module msdos
+want_module ext4
+want_module crc32_generic
+want_module crc32c_generic
+want_module libcrc32c
 
+# Network drivers
 want_module tg3
 want_module igb
 want_module e1000e
 want_module e1000
+want_module r8169
+want_module r8152

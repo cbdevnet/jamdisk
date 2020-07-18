@@ -28,8 +28,10 @@ functions:
 * `want_bin <program binary>`: Copy a binary executable to the initramfs. This also recursively includes shared libraries the binary depends on.
 * `want_lib <shared library>`: Include a shared library in your initramfs, including its dependencies.
 * `want_module <kernel module name>`: Include a kernel module and its dependencies in the initramfs. Included kernel modules will be loaded by the init script.
+* `want_dir <absolute directory path>`: Include a complete directory by an absolute path (the directory will be available at the same path in the booted system).
+* `want_file <absolute file path>`: Include a single file by its absolute path (the file will be available at the same path in the booted system).
 
-Note that all binaries and modules you want to include in the initramfs have to exist (i.e., be installed) on the system running jamdisk.
+Note that all binaries, modules and files you want to include in the initramfs have to exist (i.e., be installed) on the system running jamdisk.
 
 ### The project override directory
 
