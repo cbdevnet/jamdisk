@@ -39,7 +39,7 @@ if [ -n "$BOOTIF" ]; then
 			if [ "$mac" = "$(cat $ifacepath/address | tr -d " \n")" ]; then
 				printf "Boot interface recognized as %s, trying DHCP\n" "$iface"
 				ip l set dev "$iface" up
-				udhcpc -t 3 -i "$iface" -s ./udhcpc.script
+				udhcpc -t 3 -n -i "$iface" -s ./udhcpc.script
 				dhcp_done=1
 			fi
 		fi
@@ -53,7 +53,7 @@ elif [ "$dhcp" != "no" ]; then
 	done
 
 	printf "Trying DHCP on all supported interfaces\n"
-	udhcpc -t 3 -s ./udhcpc.script
+	udhcpc -t 3 -n -s ./udhcpc.script
 fi
 
 if [ -x "./main" ]; then

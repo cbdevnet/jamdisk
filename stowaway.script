@@ -3,6 +3,8 @@ want_bin lsblk
 want_bin blkid
 want_bin fdisk
 want_bin vim
+want_bin mkfs.ext4
+want_bin mkfs.vfat
 want_bin e2label
 want_bin wget
 want_bin curl
